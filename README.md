@@ -1,27 +1,129 @@
-# Workflow
+# bpmn-js-example-angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
+[![CI](https://github.com/bpmn-io/bpmn-js-example-angular/workflows/CI/badge.svg)](https://github.com/bpmn-io/bpmn-js-example-angular/actions?query=workflow%3ACI)
 
-## Development server
+An example how to integrate bpmn-js with an [Angular](https://angular.io/) application.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+![Integration Screenshot](./docs/screenshot.png)
 
-## Code scaffolding
+## Prerequisites
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Assume you bootstrapped your application using the `ng` command:
 
-## Build
+```sh
+ng new bpmn-js-app --defaults=true
+cd bpmn-js-app
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## Integrating bpmn-js
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Create a component similar to [`DiagramComponent`](./bpmn-js-app/src/app/diagram/diagram.component.ts):
 
-## Running end-to-end tests
+```typescript
+import {
+  AfterContentInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  ViewChild,
+  SimpleChanges,
+  EventEmitter
+} from '@angular/core';
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
 
-## Further help
+/**
+ * You may include a different variant of BpmnJS:
+ *
+ * bpmn-viewer  - displays BPMN diagrams without the ability
+ *                to navigate them
+ * bpmn-modeler - bootstraps a full-fledged BPMN editor
+ */
+import * as BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+import { importDiagram } from './rx';
+
+import { throwError } from 'rxjs';
+
+@Component({
+  selector: 'app-diagram',
+  template: `
+    <div #ref class="diagram-container"></div>
+  `,
+  styles: [
+    `
+      .diagram-container {
+        height: 100%;
+        width: 100%;
+      }
+    `
+  ]
+})
+export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy {
+
+  // instantiate BpmnJS with component
+  private bpmnJS: BpmnJS;
+
+  // retrieve DOM element reference
+  @ViewChild('ref', { static: true }) private el: ElementRef;
+
+  @Output() private importDone: EventEmitter<any> = new EventEmitter();
+
+  @Input() private url: string;
+
+  constructor(private http: HttpClient) {
+
+    this.bpmnJS = new BpmnJS();
+
+    this.bpmnJS.on('import.done', ({ error }) => {
+      if (!error) {
+        this.bpmnJS.get('canvas').zoom('fit-viewport');
+      }
+    });
+  }
+
+  ngAfterContentInit(): void {
+    // attach BpmnJS instance to DOM element
+    this.bpmnJS.attachTo(this.el.nativeElement);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // re-import whenever the url changes
+    if (changes.url) {
+      this.loadUrl(changes.url.currentValue);
+    }
+  }
+
+  ngOnDestroy(): void {
+    // destroy BpmnJS instance
+    this.bpmnJS.destroy();
+
+    this.viewer.attachTo(this.el.nativeElement);
+  }
+}
+
+```
+
+
+## Test the Example
+
+```sh
+npm install
+npm run all
+```
+
+## Additional Resources
+
+* [bpmn-js Examples](https://github.com/bpmn-io/bpmn-js-examples)
+* [bpmn-js Viewer Documentation](https://github.com/bpmn-io/bpmn-js/blob/master/lib/Viewer.js), [Example](https://github.com/bpmn-io/bpmn-js-examples/blob/master/starter/viewer.html)
+* [bpmn-js Modeler Documentation](https://github.com/bpmn-io/bpmn-js/blob/master/lib/Modeler.js), [Example](https://github.com/bpmn-io/bpmn-js-examples/tree/master/modeler)
+* [How to add Keyboard-Bindings](https://forum.bpmn.io/t/hotkeys-like-the-demo/89/2) (cf. [`Keyboard` service](https://github.com/bpmn-io/diagram-js/blob/master/lib/features/keyboard/Keyboard.js))
+
+## License
+
+MIT
