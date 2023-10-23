@@ -17,6 +17,7 @@ import { map, switchMap } from "rxjs/operators";
 import * as BpmnJS from "bpmn-js/dist/bpmn-modeler.production.min.js";
 import { from, Observable, Subscription } from "rxjs";
 import myPaletteProvider from "../palette";
+import { SidebarService } from "../services/showSidebar.service";
 
 @Component({
   selector: "app-diagram",
@@ -32,7 +33,10 @@ export class DiagramComponent
     additionalModules: [myPaletteProvider],
   });
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private sidebarService: SidebarService
+  ) {
     this.bpmnJS.on("import.done", ({ error }) => {
       if (!error) {
         this.bpmnJS.get("canvas").zoom("fit-viewport");
@@ -43,7 +47,12 @@ export class DiagramComponent
   ngAfterContentInit(): void {
     this.bpmnJS.attachTo(this.el.nativeElement);
     this.bpmnJS.on("element.click", (event) => {
-      console.log("Shape clicked:", event.element);
+      if (event.element.type !== "bpmn:Process") {
+        console.log("Click Event Triggered:", event.element);
+        this.sidebarService.toggleSidebar(true, event.element.id);
+      } else {
+        this.sidebarService.toggleSidebar(false);
+      }
     });
   }
 
