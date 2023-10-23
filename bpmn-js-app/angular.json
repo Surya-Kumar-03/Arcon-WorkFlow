@@ -20,7 +20,12 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/web.config",
+                "input": "src/",
+                "output": "./"
+              }
             ],
             "styles": [
               "node_modules/bpmn-js/dist/assets/diagram-js.css",

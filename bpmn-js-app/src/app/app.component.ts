@@ -15,7 +15,7 @@ export class AppComponent {
   }
 
   title = "bpmn-js-angular";
-  diagramUrl = "assets/diagram.bpmn";
+  diagramUrl = "../assets/diagram.bpmn";
   importError?: Error;
 
   handleImported(event) {
