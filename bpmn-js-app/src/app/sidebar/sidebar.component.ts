@@ -16,7 +16,6 @@ export class SidebarComponent {
     this.sidebarService.toggleSidebar(false);
   }
 
-  // Whenever you want to trigger change detection manually, call this method
   detectChanges() {
     this.cdr.detectChanges();
   }
