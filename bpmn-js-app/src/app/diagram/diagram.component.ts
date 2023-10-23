@@ -14,10 +14,9 @@ import {
 
 import { HttpClient } from "@angular/common/http";
 import { map, switchMap } from "rxjs/operators";
-
 import * as BpmnJS from "bpmn-js/dist/bpmn-modeler.production.min.js";
-
 import { from, Observable, Subscription } from "rxjs";
+import myPaletteProvider from "../palette";
 
 @Component({
   selector: "app-diagram",
@@ -29,7 +28,9 @@ export class DiagramComponent
   @ViewChild("ref", { static: true }) private el: ElementRef;
   @Input() private url?: string;
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
-  private bpmnJS: BpmnJS = new BpmnJS();
+  private bpmnJS: BpmnJS = new BpmnJS({
+    additionalModules: [myPaletteProvider],
+  });
 
   constructor(private http: HttpClient) {
     this.bpmnJS.on("import.done", ({ error }) => {
@@ -41,6 +42,9 @@ export class DiagramComponent
 
   ngAfterContentInit(): void {
     this.bpmnJS.attachTo(this.el.nativeElement);
+    this.bpmnJS.on("element.click", (event) => {
+      console.log("Shape clicked:", event.element);
+    });
   }
 
   ngOnInit(): void {

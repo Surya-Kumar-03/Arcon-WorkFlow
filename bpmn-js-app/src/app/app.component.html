@@ -8,8 +8,8 @@
     (importDone)="handleImported($event)"
   ></app-diagram>
 
-  <div class="import-error" *ngIf="importError">
-    <strong>Failed to render diagram: </strong>
+  <div class="absolute top-14 right-4" *ngIf="importError">
+    <strong>Workflow Render Failed: </strong>
     {{ importError.message }}
   </div>
 </div>
