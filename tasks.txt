@@ -1,0 +1,11 @@
+1. Which all different types of shapes are there and what are their elements names?
+2. Which all events are available for the shapes to get more control on?
+3. Go through the Camunda workflow process and see how they have incorporated bpmn.js?
+
+
+<bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+    <dc:Bounds x="173" y="102" width="36" height="36"/>
+    <bpmndi:BPMNLabel>
+        <dc:Bounds x="190" y="145" width="0" height="0"/>
+    </bpmndi:BPMNLabel>
+</bpmndi:BPMNShape>

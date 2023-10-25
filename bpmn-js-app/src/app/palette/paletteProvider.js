@@ -9,11 +9,7 @@ export default class MyPaletteProvider {
   getPaletteEntries(element) {
     return function (entries) {
       const entriesToDelete = [
-        "hand-tool",
-        "space-tool",
-        "lasso-tool",
-        "global-connect-tool",
-        "create.data-store",
+        
       ];
       entriesToDelete.forEach((entryId) => {
         if (entries[entryId]) {

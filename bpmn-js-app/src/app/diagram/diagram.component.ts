@@ -17,6 +17,7 @@ import { map, switchMap } from "rxjs/operators";
 import * as BpmnJS from "bpmn-js/dist/bpmn-modeler.production.min.js";
 import { from, Observable, Subscription } from "rxjs";
 import myPaletteProvider from "../palette";
+import customContextPadProvider from "../contextPad";
 import { SidebarService } from "../services/showSidebar.service";
 
 @Component({
@@ -30,7 +31,7 @@ export class DiagramComponent
   @Input() private url?: string;
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
   private bpmnJS: BpmnJS = new BpmnJS({
-    additionalModules: [myPaletteProvider],
+    additionalModules: [myPaletteProvider, customContextPadProvider],
   });
 
   constructor(

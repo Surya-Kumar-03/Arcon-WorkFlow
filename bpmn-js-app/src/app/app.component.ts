@@ -10,7 +10,6 @@ export class AppComponent {
 
   // For deciding whether to show the form
   get isSidebarVisible() {
-    console.log(this.sidebarService.currentElementId);
     return this.sidebarService.isSidebarVisible;
   }
 
@@ -20,6 +19,12 @@ export class AppComponent {
 
   handleImported(event) {
     const { type, error, warnings } = event;
+
+    // removes seperator
+    const seperator = document.querySelector(".separator");
+    if (seperator) {
+      seperator.remove();
+    }
 
     if (type === "error") {
       console.error("Failed to render diagram", error);
